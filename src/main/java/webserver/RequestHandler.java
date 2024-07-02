@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RequestHandler implements Callable<String> {
+public class RequestHandler implements Callable<Void> {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private Socket connection;
@@ -20,7 +20,7 @@ public class RequestHandler implements Callable<String> {
         this.connection = connectionSocket;
     }
 
-    public String call() {
+    public Void call() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
@@ -28,41 +28,17 @@ public class RequestHandler implements Callable<String> {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             Request request = new Request(br);
             DataOutputStream dos = new DataOutputStream(out);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
             FileInputStream fis = new FileInputStream("src/main/resources/static" + request.getPath());
-            byte[] body = fis.readAllBytes();
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            bis.transferTo(bos);
+            byte[] body = bos.toByteArray();
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
-
-        return "hello";
-    }
-
-    private static Map<String, String> clientHeaderParser(InputStream in) throws IOException {
-        Map<String, String> httpHeaders = new ConcurrentHashMap<>();
-//        for(String line: headerLines) {
-//            StringTokenizer headerToken = new StringTokenizer(line, ": ");
-//            String headerName = headerToken.nextToken();
-//            String headerValue = headerToken.nextToken();
-//            httpHeaders.put(headerName, headerValue);
-//        }
-        return httpHeaders;
-    }
-
-
-
-    private String readString(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = inputStream.read(buffer)) != -1) {
-            byteArrayOutputStream.write(buffer, 0, bytesRead);
-            if (inputStream.available() == 0) {
-                break;
-            }
-        }
-        return new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8);
+        return null;
     }
 
     private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
