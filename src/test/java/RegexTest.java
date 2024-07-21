@@ -197,4 +197,18 @@ public class RegexTest {
     m.appendTail(sb);
     logger.debug(sb.toString());
   }
+
+  @Test
+  void t() {
+    String k = "------WebKitFormBoundarymlsSN8ar4QkP9bFQ\r\n" +
+            "Content-Disposition: form-data; name=\"title\"\r\n" +
+            "\r\n" +
+            "sadf\r\n" +
+            "------WebKitFormBoundarymlsSN8ar4QkP9bFQ\r\n" +
+            "Content-Disposition: form-data; name=\"content\"\r\n" +
+            "\r\n" +
+            "asdf\r\n" +
+            "------WebKitFormBoundarymlsSN8ar4QkP9bFQ--\r\n";
+    logger.debug("size = {}", k.getBytes(StandardCharsets.ISO_8859_1).length);
+  }
 }
