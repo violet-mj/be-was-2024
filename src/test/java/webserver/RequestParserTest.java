@@ -6,6 +6,7 @@ import db.Database;
 import enums.HttpCode;
 import enums.HttpMethod;
 import enums.MimeType;
+import model.Part;
 import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -163,7 +164,7 @@ class RequestParserTest {
 
         // then
         assertThat(response.getHttpCode()).isEqualTo(HttpCode.BAD_REQUEST);
-        assertThat(fileName).isEqualTo("error/400");
+        assertThat(fileName).isEqualTo("registration/index");
     }
 
     @Test
@@ -252,5 +253,37 @@ class RequestParserTest {
         assertThatThrownBy(() -> {
             RequestParser.getRequestParser().getRequest(bis);
         }).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("multipart/form-data 파싱 테스트")
+    void multipartFormdataTest() throws IOException {
+        // given
+        String httpMessage = "POST /index.html http/1.1\r\n" +
+                "Cookie: price=10\r\n" +
+                "Content-Length: 238\r\n" +
+                "Content-Type: multipart/form-data; boundary=----WebKitFormBoundarymlsSN8ar4QkP9bFQ\r\n\r\n" +
+                "------WebKitFormBoundarymlsSN8ar4QkP9bFQ\r\n" +
+                "Content-Disposition: form-data; name=\"title\"\r\n" +
+                "\r\n" +
+                "sadf\r\n" +
+                "------WebKitFormBoundarymlsSN8ar4QkP9bFQ\r\n" +
+                "Content-Disposition: form-data; name=\"content\"\r\n" +
+                "\r\n" +
+                "asdf\r\n" +
+                "------WebKitFormBoundarymlsSN8ar4QkP9bFQ--\r\n";
+
+        ByteArrayInputStream bis = new ByteArrayInputStream(httpMessage.getBytes());
+
+        // when
+        Request request = RequestParser.getRequestParser().getRequest(bis);
+        Part title = request.getPart("title");
+        String rawBody = new String(title.getRawBody());
+
+        // then
+        assertThat(request.getCookie("price")).isEqualTo("10");
+        assertThat(title.getDispositionType()).isEqualTo("form-data");
+        assertThat(rawBody).isEqualTo("sadf");
+
     }
 }

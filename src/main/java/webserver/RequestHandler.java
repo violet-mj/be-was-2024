@@ -42,7 +42,7 @@ public class RequestHandler implements Callable<Void> {
             // 클라이언트에게 파일 반환
             response.send(dos, view.render());
         } catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.error(e.getMessage(), e);
         }
         return null;
     }
