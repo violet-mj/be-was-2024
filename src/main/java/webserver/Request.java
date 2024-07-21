@@ -1,6 +1,7 @@
 package webserver;
 
 import enums.HttpMethod;
+import model.Part;
 
 import java.util.Map;
 
@@ -12,6 +13,7 @@ public class Request{
     private Map<String, String> httpHeaders;
     private Map<String, String> parameters;
     private Map<String, String> cookies;
+    private Map<String, Part> parts;
     private String body;
 
     public Request(RequestBuilder builder) {
@@ -22,6 +24,7 @@ public class Request{
       this.parameters = builder.parameters;
       this.cookies = builder.cookies;
       this.body = builder.body;
+      this.parts = builder.parts;
     }
 
     public static class RequestBuilder {
@@ -31,6 +34,7 @@ public class Request{
       private Map<String, String> httpHeaders;
       private Map<String, String> parameters;
       private Map<String, String> cookies;
+      private Map<String, Part> parts;
       private String body;
 
       public RequestBuilder setMethod(HttpMethod method) {
@@ -68,6 +72,11 @@ public class Request{
         return this;
       }
 
+      public RequestBuilder setParts(Map<String, Part> parts) {
+        this.parts = parts;
+        return this;
+      }
+
       public Request build() {
         return new Request(this);
       }
@@ -100,6 +109,13 @@ public class Request{
 
     public String getCookie(String cookieKey) {
       return cookies.get(cookieKey);
+    }
+    public Part getPart(String name) {
+      return parts.get(name);
+    }
+
+    public String getBody() {
+      return body;
     }
 
     public HttpMethod getMethod() {
