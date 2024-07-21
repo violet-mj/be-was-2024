@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ApiProcessManager {
+    private static Logger logger = LoggerFactory.getLogger(ApiProcessManager.class);
     private List<ApiInfo> apiProcessStore;
     private static class LazyHolder {
         private static ApiProcessManager instance = new ApiProcessManager();
@@ -32,9 +33,11 @@ public class ApiProcessManager {
         apiProcessStore.add(new ApiInfo("/user/list", HttpMethod.GET, new UserlistPageApiProcess()));
         apiProcessStore.add(new ApiInfo("/user/write", HttpMethod.GET, new WritePageApiProcess()));
         apiProcessStore.add(new ApiInfo("/user/write", HttpMethod.POST, new PostApiProcess()));
+        apiProcessStore.add(new ApiInfo("/post/(\\d+)", HttpMethod.GET, new ArticlePageApiProcess()));
     }
 
     public ApiProcess get(String path, HttpMethod method) {
+        logger.debug("apiPath = {} method = {}", path, method);
         int qmLoc = path.indexOf("/");
         String apiPath = path.substring(0, qmLoc);
         String lastPath = path.substring(qmLoc + 1);
@@ -46,7 +49,7 @@ public class ApiProcessManager {
         boolean isApiPathExist = false;
 
         for(ApiInfo apiInfo: apiProcessStore) {
-            if(apiInfo.isApiPathNotSame(path)) {
+            if(apiInfo.isApiPathNotSame(path, apiInfo.getApiPath())) {
                 continue;
             }
             isApiPathExist = true;
