@@ -26,9 +26,12 @@
           </li>
         </ul>
       </header>
+      <my-template mt::if="articleFail">
+        {articleFail}
+      </my-template>
       <div class="page">
         <h2 class="page-title">게시글 작성</h2>
-        <form class="form" action="/user/write" method="post">
+        <form class="form" action="/user/write" method="post" enctype="multipart/form-data">
           <div class="textfield textfield_size_s">
             <p class="title_textfield">제목</p>
             <input
@@ -46,6 +49,7 @@
               name = "content"
             ></textarea>
           </div>
+          파일 명 <input type="file" name="image">
           <button
             id="registration-btn"
             class="btn btn_contained btn_size_m"
