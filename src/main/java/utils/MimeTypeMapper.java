@@ -17,6 +17,7 @@ public class MimeTypeMapper {
             put(".ico", MimeType.ICO);
             put(".png", MimeType.PNG);
             put(".jpg", MimeType.JPG);
+            put(".jpeg", MimeType.JPG);
         }};
     }
 
