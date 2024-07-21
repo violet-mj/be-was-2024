@@ -3,6 +3,13 @@ package model;
 import apiprocess.ApiProcess;
 import enums.HttpMethod;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+/**
+ * API 정보를 저장하는 객체
+ * @Author minjun kim
+ */
 public class ApiInfo {
   private final String apiPath;
   private final HttpMethod httpMethod;
@@ -14,8 +21,10 @@ public class ApiInfo {
     this.apiProcess = apiProcess;
   }
 
-  public boolean isApiPathNotSame(String apiPath) {
-    return !this.apiPath.equals(apiPath);
+  public boolean isApiPathNotSame(String apiPath, String pattern) {
+    Pattern compile = Pattern.compile(pattern);
+    Matcher matcher = compile.matcher(apiPath);
+    return !matcher.matches();
   }
 
   public boolean isMethodSame(HttpMethod httpMethod) {
@@ -24,5 +33,9 @@ public class ApiInfo {
 
   public ApiProcess getApiProcess() {
     return apiProcess;
+  }
+
+  public String getApiPath() {
+    return apiPath;
   }
 }

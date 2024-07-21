@@ -14,7 +14,11 @@ import webserver.Response;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.UUID;
-
+/**
+ * api path : "/user/login"
+ * 로그인 처리를 위한 클래스 (H2, jdbc 사용)
+ * @Author minjun kim
+ */
 public class LoginH2ApiProcess implements ApiProcess {
   @Override
   public String process(Request request, Response response, Map<String, Object> model) {

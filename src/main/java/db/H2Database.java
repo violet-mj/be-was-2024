@@ -12,6 +12,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * H2 데이터 베이스를 이용한 db 로직
+ * USER와 POST 처리 둘다 한 클래스안에 존재
+ * @Author minjun kim
+ */
 public class H2Database {
   private static final Logger logger = LoggerFactory.getLogger(H2Database.class);
 
@@ -148,10 +153,11 @@ public class H2Database {
     PreparedStatement statement = null;
     try {
       connection = DatabaseConfig.getConnection();
-      String sql = "INSERT INTO POSTS (title, content) VALUES (?, ?)";
+      String sql = "INSERT INTO POSTS (title, content, image) VALUES (?, ?, ?)";
       statement = connection.prepareStatement(sql);
       statement.setString(1, post.getTitle());
       statement.setString(2, post.getContent());
+      statement.setString(3, post.getImage());
       statement.executeUpdate();
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -184,7 +190,8 @@ public class H2Database {
       while (resultSet.next()) {
         String title = resultSet.getString("title");
         String content = resultSet.getString("content");
-        posts.add(new Post(title, content));
+        String image = resultSet.getString("image");
+        posts.add(new Post(title, content, image));
       }
     } catch (SQLException e) {
       throw new RuntimeException(e);
@@ -206,5 +213,48 @@ public class H2Database {
       }
     }
     return posts;
+  }
+
+  public Post findPostById(String postId) {
+    Connection connection = null;
+    PreparedStatement statement = null;
+    ResultSet resultSet = null;
+    Post post = null;
+    try {
+      connection = DatabaseConfig.getConnection();
+      String sql = "SELECT * FROM POSTS WHERE id = ?";
+      statement = connection.prepareStatement(sql);
+      statement.setString(1, postId);
+      resultSet = statement.executeQuery();
+
+      logger.debug("size = {}", resultSet.getFetchSize());
+
+      while(resultSet.next()) {
+        String title = resultSet.getString("title");
+        String content = resultSet.getString("content");
+        String image = resultSet.getString("image");
+        post = new Post(title, content, image);
+      }
+    } catch (SQLException e) {
+      throw new RuntimeException(e);
+    } finally {
+      try {
+        if(connection != null) {
+          connection.close();
+        }
+
+        if(statement != null) {
+          statement.close();
+        }
+
+        if (resultSet != null) {
+          resultSet.close();
+        }
+      } catch (SQLException e) {
+        throw new SQLRuntimeException("db 오류", e);
+      }
+    }
+
+    return post;
   }
 }

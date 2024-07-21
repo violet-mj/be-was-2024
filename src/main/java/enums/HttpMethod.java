@@ -1,5 +1,9 @@
 package enums;
 
+/**
+ * Http Method를 저장해 놓은 클래스
+ * @Author minjun kim
+ */
 public enum HttpMethod {
     GET("GET"),
     POST("POST");

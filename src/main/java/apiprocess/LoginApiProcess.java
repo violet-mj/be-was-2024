@@ -13,6 +13,11 @@ import webserver.Response;
 import java.util.Map;
 import java.util.UUID;
 
+/**
+ * api path : "/user/login"
+ * 로그인 처리를 위한 구현체 (Database 클래스 사용)
+ * @Author minjun kim
+ */
 public class LoginApiProcess implements ApiProcess {
   @Override
   public String process(Request request, Response response, Map<String, Object> model) {

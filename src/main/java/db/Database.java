@@ -7,6 +7,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * 런타임 전용 데이터 베이스
+ */
 public class Database {
     private static Map<String, User> users = new ConcurrentHashMap<>();
 

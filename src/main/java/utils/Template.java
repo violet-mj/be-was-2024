@@ -6,10 +6,16 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 동적 html을 처리하기 위한 클래스
+ * <my-template></my-template> 태그로 구현
+ * if, if-not, each 사용 가능
+ */
 public class Template {
 
   private static final Pattern template = Pattern.compile("<my-template\\s*?(mt::(.+?)=\"(.+?)\")?\\s*?>(.*?)</my-template\\s*>", Pattern.DOTALL);
@@ -21,6 +27,13 @@ public class Template {
   private static final String MT_IF_NOT = "if-not";
   private static final String MT_EACH = "each";
 
+  /**
+   * 동적 html을 렌더링하기 위한 메서드
+   * @param body 전체 html 파일
+   * @param model was에서 가져올 수 있는 객체 모음
+   * @return
+   * @throws IllegalAccessException
+   */
   public static byte[] render(byte[] body, Map<String, Object> model) throws IllegalAccessException {
     String bodyStr = new String(body, StandardCharsets.UTF_8);
     Matcher matcher = template.matcher(bodyStr);
@@ -68,6 +81,14 @@ public class Template {
     return sb.toString().trim().getBytes();
   }
 
+  /**
+   * {Object}를 실제 데이터 값으로 바인딩해주는 메서드
+   * 또한 Iterable인지 확인한다.
+   * @param body
+   * @param o
+   * @param idx
+   * @return
+   */
   public static String doBindingForIterable(String body, Object o, int idx) {
     StringBuilder sb = new StringBuilder();
     if(body.isEmpty()) return body;
@@ -105,13 +126,20 @@ public class Template {
         }
         i++;
       }
-      matcher.appendReplacement(sb, flag ? tmpObj.toString() : "");
+      matcher.appendReplacement(sb, flag && !Objects.isNull(tmpObj) ? tmpObj.toString() : "");
     }
     matcher.appendTail(sb);
 
     return sb.toString();
   }
 
+  /**
+   * {Object}의 값을 실제 데이터로 바인딩하는 메서드
+   * @param body
+   * @param model
+   * @return
+   * @throws IllegalAccessException
+   */
   public static String doBinding(String body, Map<String, Object> model) throws IllegalAccessException {
     StringBuilder sb = new StringBuilder();
     if(body.isEmpty()) return body;
