@@ -1,12 +1,16 @@
 package enums;
 
+/**
+ * HTTP Status Code를 저장해놓은 클래스
+ * @Author minjun kim
+ */
 public enum HttpCode {
     OK(200, HttpResult.SUCCESS, "OK"),
     Found(302, HttpResult.REDIRECT, "Found"),
-    UNPROCESSABLE_CONTENT(422, HttpResult.CLIENT_ERROR, "Unprocessable Content"),
     BAD_REQUEST(400, HttpResult.CLIENT_ERROR, "Bad Request"),
-    UNAUTHORIZED(401, HttpResult.CLIENT_ERROR, "Unauthorized");
-
+    UNAUTHORIZED(401, HttpResult.CLIENT_ERROR, "Unauthorized"),
+    NOT_FOUND(404, HttpResult.CLIENT_ERROR, "Not Found"),
+    UNPROCESSABLE_CONTENT(422, HttpResult.CLIENT_ERROR, "Unprocessable Content");
     private int code;
     private HttpResult httpResult;
     private String message;
